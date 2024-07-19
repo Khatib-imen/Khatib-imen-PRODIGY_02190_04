@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { fetchWeatherByLocation, fetchWeatherByCoordinates } from './components/api/weatherApi';
 import Weather from './components/Weather';
 import './components/styles/App.css';
+
 const App = () => {
   const [location, setLocation] = useState('');
   const [weatherData, setWeatherData] = useState(null);
   const [error, setError] = useState('');
 
-  const updateBackground = (weather) => {
+  const updateBackground = (temperature) => {
     let backgroundUrl = '';
 
-    if (weather === 'rain') {
+    if (temperature < 20) {
       backgroundUrl = 'url(/rain.jpg)';
-    } else if (weather === 'hot') {
-      backgroundUrl = 'url(/hot.jpg)';
-    } else {
+    } else if (temperature >= 20 && temperature <= 30) {
       backgroundUrl = 'url(/medium.jpg)';
+    } else {
+      backgroundUrl = 'url(/hot.jpg)';
     }
 
     document.body.style.backgroundImage = backgroundUrl;
@@ -27,7 +28,7 @@ const App = () => {
         try {
           const data = await fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude);
           setWeatherData(data);
-          updateBackground(data.weather[0].main.toLowerCase());
+          updateBackground(data.main.temp);
         } catch (err) {
           console.error(err);
           setError('Unable to fetch weather data.');
@@ -44,7 +45,7 @@ const App = () => {
     try {
       const data = await fetchWeatherByLocation(location);
       setWeatherData(data);
-      updateBackground(data.weather[0].main.toLowerCase());
+      updateBackground(data.main.temp);
       setError('');
     } catch (err) {
       console.error(err.response.data);
@@ -72,3 +73,4 @@ const App = () => {
 };
 
 export default App;
+
