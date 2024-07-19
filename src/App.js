@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWeatherByLocation, fetchWeatherByCoordinates } from './components/api/weatherApi';
 import Weather from './components/Weather';
+import Notification from './components/Notification/Notification.js';
 import './components/styles/App.css';
 
 const App = () => {
   const [location, setLocation] = useState('');
   const [weatherData, setWeatherData] = useState(null);
-  const [error, setError] = useState('');
+  const [notification, setNotification] = useState('');
 
   const updateBackground = (temperature) => {
     let backgroundUrl = '';
@@ -31,11 +32,13 @@ const App = () => {
           updateBackground(data.main.temp);
         } catch (err) {
           console.error(err);
-          setError('Unable to fetch weather data.');
+          setNotification('Unable to fetch weather data.');
+          setTimeout(() => setNotification(''), 3000); // Hide notification after 3 seconds
         }
       },
       () => {
-        setError('Location access denied. Please enter a location.');
+        setNotification('Location access denied. Please enter a location.');
+        setTimeout(() => setNotification(''), 3000); // Hide notification after 3 seconds
       }
     );
   }, []);
@@ -46,13 +49,17 @@ const App = () => {
       const data = await fetchWeatherByLocation(location);
       setWeatherData(data);
       updateBackground(data.main.temp);
-      setError('');
+      setNotification('');
     } catch (err) {
-      console.error(err.response.data);
-      setError('Location not found. Please try again.');
+      console.error(err);
+      // Check if err.response and err.response.data exist
+      const errorMessage = err.response?.data?.message || 'Location not found. Please try again.';
+      setNotification(errorMessage);
+      setTimeout(() => setNotification(''), 3000); // Hide notification after 3 seconds
       setWeatherData(null);
     }
   };
+  
 
   return (
     <div className="App">
@@ -66,11 +73,14 @@ const App = () => {
         />
         <button type="submit">Get Weather</button>
       </form>
-      {error && <p>{error}</p>}
       {weatherData && <Weather data={weatherData} />}
+      <Notification 
+        message={notification} 
+        onClose={() => setNotification('')} 
+        className={notification ? 'show' : ''}
+      />
     </div>
   );
 };
 
 export default App;
-
