@@ -1,5 +1,5 @@
 import React from 'react';
-import './Notification.css';
+import '../styles/Notification.css';
 
 const Notification = ({ message, onClose }) => {
   if (!message) return null;
@@ -13,4 +13,3 @@ const Notification = ({ message, onClose }) => {
 };
 
 export default Notification;
-
