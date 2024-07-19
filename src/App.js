@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWeatherByLocation, fetchWeatherByCoordinates } from './components/api/weatherApi';
 import Weather from './components/Weather';
-import Notification from './components/Notification/Notification.js';
+import Notification from './components/api/Notification.js';
 import './components/styles/App.css';
 
 const App = () => {
